@@ -43,24 +43,28 @@ public class GamePanel extends JPanel implements ActionListener {
         draw(g);
     }
     public void draw(Graphics g){
-        for (int i = 0; i < Screen_Height/UNIT_SIZE; i++) {
-            g.drawLine(i*UNIT_SIZE, 0, i*UNIT_SIZE,Screen_Height);
-            g.drawLine(0, i*UNIT_SIZE, Screen_width,i*UNIT_SIZE);
-        }
-        g.setColor(Color.red);
-        g.fillOval(appleX,appleY,UNIT_SIZE,UNIT_SIZE);
+        if (running) {
+            for (int i = 0; i < Screen_Height / UNIT_SIZE; i++) {
+                g.drawLine(i * UNIT_SIZE, 0, i * UNIT_SIZE, Screen_Height);
+                g.drawLine(0, i * UNIT_SIZE, Screen_width, i * UNIT_SIZE);
+            }
+            g.setColor(Color.red);
+            g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
 
-        for (int i = 0; i < bodyParts; i++) {
-            if (i == 0){
-                g.setColor(Color.green);
-                //g.fillRect(x[i],y[i],UNIT_SIZE,UNIT_SIZE);
-                g.fillOval(x[i],y[i],UNIT_SIZE,UNIT_SIZE);
+            for (int i = 0; i < bodyParts; i++) {
+                if (i == 0) {
+                    g.setColor(Color.green);
+                    //g.fillRect(x[i],y[i],UNIT_SIZE,UNIT_SIZE);
+                    g.fillOval(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
+                } else {
+                    g.setColor(new Color(45, 180, 0));
+                    //g.fillRect(x[i],y[i],UNIT_SIZE,UNIT_SIZE);
+                    g.fillOval(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
+                }
             }
-            else {
-                g.setColor(new Color(45,180,0));
-                //g.fillRect(x[i],y[i],UNIT_SIZE,UNIT_SIZE);
-                g.fillOval(x[i],y[i],UNIT_SIZE,UNIT_SIZE);
-            }
+        }
+        else {
+            gameOver(g);
         }
     }
     public void NewApple(){
@@ -88,8 +92,12 @@ public class GamePanel extends JPanel implements ActionListener {
                 break;
         }
     }
-    public void cheackApple(){
-
+    public void checkApple(){
+        if ((x[0] == appleX) && (y[0] == appleY)){
+            bodyParts++;
+            applesEaten++;
+            NewApple();
+        }
     }
     public void cheackCollision(){
         // checks if head collides with body
@@ -121,13 +129,17 @@ public class GamePanel extends JPanel implements ActionListener {
 
     }
     public void gameOver(Graphics g){
+        g.setColor(Color.red);
+        g.setFont(new Font("Ink Free", Font.BOLD,75));
+        FontMetrics metrics = getFontMetrics(g.getFont());
 
+        g.drawString("GAME OVER",(Screen_width-metrics.stringWidth("GAME OVER"))/2 ,Screen_Height/2);
     }
     @Override
     public void actionPerformed(ActionEvent e) {
         if (running){
             move();
-            cheackApple();
+            checkApple();
             cheackCollision();
         }
         repaint();
